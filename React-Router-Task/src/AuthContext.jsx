@@ -1,6 +1,8 @@
 import { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import ToastMessage from "./ToastMessage";
 // Create Authentication Context
 const AuthContext = createContext();
 
@@ -17,8 +19,10 @@ export const AuthProvider = ({ children }) => {
     setUser(newUser);
     localStorage.setItem("user", JSON.stringify(newUser));
     navigate('/'); // Redirect after signup
+    return true;
   };
 
+  
   // Login function
   const login = (email, password) => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -28,8 +32,9 @@ export const AuthProvider = ({ children }) => {
     else if (storedUser && storedUser.email === email && storedUser.password === password) {
       setUser(storedUser);
       navigate("/UserPage"); // Redirect after login
+      return true;
     } else {
-      alert("Invalid email or password!");
+      ToastMessage("Invalid email or password!",'error');
     }
   };
 
@@ -37,6 +42,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     // localStorage.removeItem("user");
+    ToastMessage("Logged out Successful",'info')
     navigate("/"); // Redirect to home
   };
 

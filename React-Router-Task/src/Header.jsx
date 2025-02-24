@@ -8,12 +8,10 @@ const Header=()=>{
     const navToSignIn=()=>{
         navigate('/SignIn')
     }
-    const navToRegister=()=>{
-        navigate('/Register')
-    }
+    
     
     return(
-        <>
+        <>  
             <header className='header'>
                 <div>
                     <img src={logo} alt="" />

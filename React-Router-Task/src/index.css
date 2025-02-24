@@ -1,4 +1,4 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Bree+Serif&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rajdhani:wght@300;400;500;600;700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
 /* body {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   margin: 0;
@@ -7,9 +7,12 @@
   place-items: center;
 }
 */
+*{
+  font-family: "Poppins",serif; 
+}
 body{
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  font-family: "Poppins",serif;
 }
  
 body{
@@ -41,7 +44,7 @@ body{
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
-    font-family: inherit;
+    /* font-family: inherit; */
     background-color: rgb(12, 109, 139);
     color:rgba(255, 253, 253, 0.97);
     cursor: pointer;
@@ -53,7 +56,7 @@ body{
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
-    font-family: inherit;
+    /* font-family: inherit; */
     background-color: rgb(12, 109, 139);
     color:rgba(255, 253, 253, 0.97);
     cursor: pointer;
@@ -65,10 +68,11 @@ body{
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
-    font-family: inherit;
+    /* font-family: inherit; */
     background-color: rgb(12, 109, 139);
     color:rgba(255, 253, 253, 0.97);
     cursor: pointer;
+    width: 100%;
     transition: border-color 0.25s;
 }
 
@@ -94,7 +98,7 @@ body{
 .persona-btn p{
   font-size: 20px;
   font-weight: 700;
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  /* font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
 }
 .persona-btn > .content{
   padding: 0%  1% 1% 1%;;
@@ -105,7 +109,7 @@ body{
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
+  /* font-family: inherit; */
   background-color: rgb(12, 109, 139);
   color:rgba(255, 253, 253, 0.97);
   cursor: pointer;
@@ -114,13 +118,14 @@ body{
 .addPersona{
   border: none;
   background-color: white;
+  
   color: rgb(12, 109, 139);
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid rgb(12, 109, 139);
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 700;
-  font-family: inherit;
+  /* font-family: inherit; */
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -128,6 +133,8 @@ body{
   /* background-color: red; */
   display: flex;
   overflow-x: scroll;
+  cursor: pointer;
+  margin-top: 2%;
   /* justify-content: space-around; */
 }
 .card{
@@ -159,25 +166,51 @@ body{
   height: 50%;
   display: flex;
   flex-direction: column;
+  padding-bottom: 17%;
 }
 .update > .image{
+  /* padding: 0 2%; */
   background-image: url("./assets/Banner.png");
   background-position : center;
   background-size: cover;
+  object-fit: cover;
   /* object-fit: fill ; */
   background-repeat: no-repeat;
   display: flex;
   justify-content: space-between;
+  
   width: 100%;
   height: 50vh;
 }
+.updateHeader{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .username{
+  padding: 0 2%;
   margin-top: 17%;
+}
+.username p{
+  margin-top: 3%;
+}
+
+.username input{
+  font-weight: 500;
+  font-size: 25px;
+  width: 100px;
+  border: none;
+  outline: none;
+  background: none;
+  padding: 0;
+  margin-top: 2%;
 }
 .edit{
   margin-top: 20%;
   padding : 0% 2%;
 }
+
 .update > .image p{
   width: 500px;
   padding: 0 2% ;
@@ -186,18 +219,23 @@ body{
 .update > .image input{
   width: 100px;
   padding: 0 3%;
-  margin: 4%;
+  /* margin: 4%;   */
   border: none;
 }
 
 .text-area{
-  width: 100%;
+  /* background-color: aqua; */
+  padding: 2% 0 0 2%;
+  width: 90%;
   display: grid;
   grid-template-columns: auto auto auto;
-  justify-content: space-around;
+  column-gap: 10%;
+  row-gap: 10%;
+  /* justify-content: space-around; */
 }
 
 .text-area textarea{
+  /* background-color: beige; */
   margin-top: 3%;
   width: 25vw;
   height: 30vh;
@@ -205,19 +243,29 @@ body{
 .textArea{
   display: flex;
   flex-direction: column;
+  /* padding: 3% 0%; */
+  width: 25vw;
+  height: 30vh;
 }
+
 textarea{
   border: none;
   outline: none;
   resize: none;
 }
+#points , #needs,#activity{
+  width: 25vw;
+  height: 30vh;
+
+}
 textarea::placeholder{
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  font-family: "poppins",serif;
 }
 
 .footer-btns{
   width: 90%;
-  padding: 0.5% 2%;
+  padding: 0.5% 3%;
   display: flex;
   background-color: white;
   justify-content: space-between;
@@ -286,8 +334,9 @@ textarea::placeholder{
   box-shadow:  0 0 10px, 0 0 10px rgb(0,0,0,0.1);
   border-radius: 10px;
   position: fixed;
+  z-index: 1000;
   top: 20%;
-  left: 40%;
+  left: 38%;
 }
 .file-input{
   border-radius: 8px;
@@ -314,26 +363,31 @@ textarea::placeholder{
 }
 .loginForm form{
   padding: 2% 0% 17% 0%;
-  margin: 0% 20% 20% 22%;
+  margin: 0% 20% 13% 22%;
 }
-.loginForm button{
-  margin: 0% 5%;
+/* .loginForm button{
+  margin: 0% 12%;
   position: center;
   width: 75%;
-}
+} */
 .loginForm input{
-  width: 20vw;
+  width: 100%;
   height: 5vh;
+  margin: 2% 0% 2% 0%;
   border: 1px solid rgb(128,128,128,0.6);
   border-radius: 5px;
 }
 .loginForm label{
+  margin: 3% 0% 2% 0%;
   color: rgb(12, 109, 139);
 }
 .loginForm p{
   font-size: 12px;
-  padding: 1% 1% 1% 20%;
+  padding: 1% 1% 1% 19%;
   margin: 0;
+}
+input::placeholder{
+  padding-left: 3%;
 }
 .loginForm span{
   font-weight: 500;
@@ -341,12 +395,26 @@ textarea::placeholder{
   cursor: pointer;
 }
 .error{
+  margin: 0% 0% 0% 20%;
   color: red;
 }
+#login{
+  width: 35vw;
+  margin: 8% 32%;
+}
+/* button:hover{
+  background-color: transparent;
+  color: rgb(12, 109, 139);
+  transition: background-color ease 0.5s;
+} */
+.Toastify__toast{
+  font-family: "poppins", serif;
+  /* font-style: italic; */
+}
 
-
-
-
+.username input{
+  font-family: "poppins",serif;
+}
 
 
 
