@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import AuthContext from "./AuthContext";
+import ToastMessage from "./ToastMessage";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Register = () => {
     if (!name.trim()) {
       errors.name = "Name is required!";
       isValid = false;
-    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+    } else if (!/^[a-zA-Z0-9\s]+$/.test(name)) {
       errors.name = "Name can only contain letters and spaces!";
       isValid = false;
     }
@@ -56,7 +57,8 @@ const Register = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      register(name, email, password);
+      {register(name, email, password) && 
+       ToastMessage("Register Successful 👍",'success')}
     }
   };
 

@@ -2,6 +2,10 @@ import { useNavigate} from "react-router-dom"
 import { useContext } from "react";
 import AuthContext from "./AuthContext";
 import { useState } from "react";
+import { ToastContainer,toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import ToastMessage from "./ToastMessage";
+
 const SignIn=()=>{
     const navigate = useNavigate();
 
@@ -36,31 +40,34 @@ const SignIn=()=>{
           setErrors(errors);
           return isValid;
     }
-
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         if(validateForm()){
-            login(email, password);
+           { login(email, password) &&
+            ToastMessage("Logged in Successful👍","success")
+           }
         }
     };
     return(
-        <div className="loginForm">
-            <h1>LOGIN</h1>
+        <div id="login" className="loginForm">
+            <h1 style={{paddingTop:'5%'}}>LOGIN</h1>
         <form onSubmit={handleSubmit}>
         <label>Email</label><br />
         <input  type="text" className="input" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter email"/> 
-        <br /><br />
-        {errors.email && <><span className="error" style={{color:'red'}}>{errors.email}</span>
-        <br /><br /></>}
-
+        
+        {errors.email && <><span className="error" style={{color:'red',fontSize:'15px'}}>{errors.email}</span>
+        <br /></>}
+        
         <label>Password</label><br />
         <input  type="password" className="input" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Enter password"/>
-        <br /><br />
-        {errors.password && <><span className="error" style={{color:'red'}}>{errors.password}</span>
-        <br /><br /></>}
+        <br />
+        {errors.password && <><span className="error" style={{color:'red',fontSize:'15px'}}>{errors.password}</span>
+        <br /></>}
+        <br />
 
         <button  className='submit'type="submit">Submit</button><br />
-        <p>Dont't have an account?<span onClick={()=>navigate('/Register')}>Register</span></p>
+        <p>Don't have an account? <span onClick={()=>navigate('/Register')}>Register</span></p>
         </form>
         </div>
     )
