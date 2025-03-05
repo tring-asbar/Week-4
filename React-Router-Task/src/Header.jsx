@@ -1,6 +1,4 @@
 import logo from './assets/logo.svg'
-
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 
 const Header=()=>{
@@ -18,7 +16,6 @@ const Header=()=>{
                 </div>
                 <div>
                     <button className='login' onClick={navToSignIn}>Login</button>
-                    {/* <button  className='register' onClick={navToRegister}>Register</button> */}
                 </div>
             </header>
         </>

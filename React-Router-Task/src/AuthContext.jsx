@@ -6,50 +6,85 @@ import ToastMessage from "./ToastMessage";
 // Create Authentication Context
 const AuthContext = createContext();
 
+
+
+
+
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState([]);
   const [personas,setPersonas] = useState([]);
   const [selectedPersona, setSelectedPersona] = useState();
   const [personaKey,setPersonaKey] = useState();
   const navigate = useNavigate();
+  
 
   // Register function
   const register = (name, email, password) => {
-    const newUser = { name, email, password };
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    
+    // Check if email is already registered
+    if (users.some(user => user.email === email)) {
+      ToastMessage("Email already exists!", 'error');
+      return false;
+    }
+  
+    const newUser = { name, email, password, personas: [] };
+    users.push(newUser);
+  
+    localStorage.setItem("users", JSON.stringify(users));
     setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
-    navigate('/'); // Redirect after signup
+    navigate('/SignIn'); // Redirect after signup
     return true;
   };
-
+  
   
   // Login function
   const login = (email, password) => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if(storedUser==null){
-        alert("Please Register First")
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    const existingUser = users.find(user => user.email === email && user.password === password);
+  
+    if (!existingUser) {
+      ToastMessage("Invalid email or password!", 'error');
+      return false;
     }
-    else if (storedUser && storedUser.email === email && storedUser.password === password) {
-      setUser(storedUser);
-      navigate("/UserPage"); // Redirect after login
-      return true;
-    } else {
-      ToastMessage("Invalid email or password!",'error');
-    }
+  
+    localStorage.setItem("loggedInUser", JSON.stringify(existingUser));
+    setUser(existingUser);
+    navigate("/UserPage"); // Redirect after login
+    return true;
   };
-
+  
+  // localStorage.clear()
   // Logout function
   const logout = () => {
     setUser(null);
-    // localStorage.removeItem("user");
+    localStorage.removeItem("loggedInUser");
     ToastMessage("Logged out Successful",'info')
     navigate("/"); // Redirect to home
   };
 
-  const addPersona=(newPersona)=>{
+  const addPersona = (newPersona) => {
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
   
-    setPersonas([...personas,newPersona]);
-  }
+    if (!currentUser) return;
+  
+    users = users.map(user => {
+      if (user.email === currentUser.email) {
+        user.personas.push(newPersona);
+        currentUser.personas = user.personas;
+      }
+      return user;
+    });
+  
+    localStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("loggedInUser", JSON.stringify(currentUser));
+  
+    setUser(currentUser);
+    setPersonas(currentUser.personas);
+  };
+  
 
   const SetKey=(index)=>{
     setPersonaKey(index);
@@ -57,7 +92,7 @@ export const AuthProvider = ({ children }) => {
   
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout,personas,setPersonas,addPersona,selectedPersona,setSelectedPersona,SetKey,personaKey}}>
+    <AuthContext.Provider value={{ user,setUser, register, login, logout,personas,setPersonas,addPersona,selectedPersona,setSelectedPersona,SetKey,personaKey}}>
       {children}
     </AuthContext.Provider>
   );

@@ -3,6 +3,16 @@ import { useContext, useState } from "react";
 import AuthContext from "./AuthContext";
 import ToastMessage from "./ToastMessage";
 
+import { useMutation ,gql} from "@apollo/client";
+
+const create_User = gql`
+  mutation CreateUser($user_name:String!,$user_email:String!,$user_password:String!){
+      createUser(user_name:$user_name,user_email:$user_email,user_password:$user_password){
+          user_name,user_email,user_password
+      }
+  }
+`
+
 const Register = () => {
   const navigate = useNavigate();
   const { register } = useContext(AuthContext);
@@ -12,6 +22,8 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+
+  const [createUser, { loading, error }] = useMutation(create_User)
 
   const validateForm = () => {
     let errors = {};
@@ -53,12 +65,26 @@ const Register = () => {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     if (validateForm()) {
-      {register(name, email, password) && 
-       ToastMessage("Register Successful 👍",'success')}
+      try {
+        const { data } = await createUser({
+          variables: { user_name: name, user_email: email, user_password: password },
+        });
+
+        if (data) {
+          ToastMessage("Register Successful 👍", "success");
+          register(name,email,password);
+          navigate("/SignIn"); // Redirect to sign-in page
+        }
+      } catch (err) {
+        console.error("Registration error:", err);
+        ToastMessage("Registration failed ", "error");
+      }
+      
+
     }
   };
 
@@ -75,9 +101,9 @@ const Register = () => {
           onChange={(e) => setName(e.target.value)} 
           placeholder="Enter Name" 
         />
-        <br /><br />
+        <br />
         {errors.name && <><span className="error" style={{color:'red'}}>{errors.name}</span>
-        <br /><br /></>}
+        <br /></>}
 
         <label htmlFor="email">Email</label><br />
         <input 
@@ -88,9 +114,9 @@ const Register = () => {
           onChange={(e) => setEmail(e.target.value)} 
           placeholder="Enter Email"
         />
-        <br /><br />
+        <br />
         {errors.email && <><span className="error" style={{color:'red'}}>{errors.email}</span>
-        <br /><br /></>}
+        <br /></>}
 
         <label htmlFor="password">Password</label><br />
         <input 
@@ -101,9 +127,9 @@ const Register = () => {
           onChange={(e) => setPassword(e.target.value)} 
           placeholder="Enter Password"
         />
-        <br /><br />
+        <br />
         {errors.password && <><span className="error" style={{color:'red'}}>{errors.password}</span>
-        <br /><br /></>}
+        <br /></>}
 
         <label htmlFor="cfpassword">Confirm Password</label><br />
         <input 
@@ -114,10 +140,11 @@ const Register = () => {
           onChange={(e) => setConfirmPassword(e.target.value)} 
           placeholder="Enter Same Password" 
         />
-        <br /><br />
+        <br />
         {errors.confirmPassword && <><span className="error" style={{color:'red'}}>{errors.confirmPassword}</span>
-        <br /><br /></>}
-
+        <br /></>}
+        <br />
+        
         <button type="submit" className="submit">Submit</button>
         <br />
 

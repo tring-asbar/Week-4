@@ -6,7 +6,7 @@ import Header from './Header'
 import Register from './Register'
 import SignIn from './SignIn'
 import UserPage from './UserPage'
-import { BrowserRouter,Routes,Route } from 'react-router-dom'
+import {Routes,Route} from 'react-router-dom'
 import UpdatePersona from './UpdatePersona'
 function App() {
 

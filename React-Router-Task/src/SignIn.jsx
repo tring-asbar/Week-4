@@ -2,10 +2,17 @@ import { useNavigate} from "react-router-dom"
 import { useContext } from "react";
 import AuthContext from "./AuthContext";
 import { useState } from "react";
-import { ToastContainer,toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import ToastMessage from "./ToastMessage";
+import { useLazyQuery,gql } from "@apollo/client";
 
+const get_User_By_Email = gql`
+  query GetUserByEmail($user_email:String!){
+      getUserByEmail(user_email:$user_email){
+          user_name,user_email,user_password
+      }
+  }
+` 
 const SignIn=()=>{
     const navigate = useNavigate();
 
@@ -13,6 +20,8 @@ const SignIn=()=>{
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errors,setErrors] = useState({});
+
+   const [getUserByEmail,{loading,error}] = useLazyQuery(get_User_By_Email)
 
     const validateForm=()=>{
 
@@ -41,12 +50,29 @@ const SignIn=()=>{
           return isValid;
     }
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if(validateForm()){
-           { login(email, password) &&
-            ToastMessage("Logged in Successful👍","success")
-           }
+          
+          try {
+            const { data } = await getUserByEmail({ variables: { user_email: email } });
+            if (data && data.getUserByEmail) {
+                const user = data.getUserByEmail;
+                if (user.user_password === password) {
+                    ToastMessage("Logged in Successfully 👍", "success");
+                    navigate("/UserPage"); // Redirect to dashboard
+                    
+                } else {
+                    ToastMessage("Incorrect Password ", "error");
+                }
+            } else {
+                ToastMessage("User not found ", "error");
+            }
+        } catch (err) {
+            console.error("Error fetching user:", err);
+            ToastMessage("An error occurred, please try again ", "error");
+          }
+          login(email,password);
         }
     };
     return(

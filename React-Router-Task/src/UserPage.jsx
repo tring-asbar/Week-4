@@ -6,7 +6,15 @@ import AuthContext from './AuthContext';
 
 const UserPage = () => {
     const navigate = useNavigate();
-    const { logout, personas, setSelectedPersona } = useContext(AuthContext);
+    const { user,logout,setUser, personas,setPersonas, setSelectedPersona } = useContext(AuthContext);
+
+    useEffect(() => {
+        const currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        if (currentUser) {
+          setUser(currentUser);
+          setPersonas(currentUser.personas || []);
+        }
+      }, []);
 
     const navigateToUpdatePersona = () => {
         setSelectedPersona(null);
@@ -27,7 +35,8 @@ const UserPage = () => {
             <header className='header'>
                 <img src={logo} alt="" />
                 {/* console.log({logo}); */}
-                <button className='addActivity' onClick={logout}>Logout</button>
+                
+                <button className='logout' onClick={logout}>Logout</button>
             </header>
 
             <div className='persona'>

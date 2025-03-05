@@ -6,10 +6,20 @@ import AuthContext from './AuthContext';
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; 
 import ToastMessage from './ToastMessage';
+import { useMutation,gql } from '@apollo/client';
+
+const create_Persona = gql`
+  mutation CreatePersona($persona_name:String!,$persona_quote:String!,$persona_description:String!,$persona_attitudes:String!,$persona_points:String!,$persona_needs:String!,$persona_activity:String!,$user_email:String!){
+      createPersona(persona_name:$persona_name,persona_quote:$persona_quote,persona_description:$persona_description,persona_attitudes:$persona_attitudes,persona_points:$persona_points,persona_needs:$persona_needs,persona_activity:$persona_activity,user_email:$user_email){
+          persona_name,persona_quote,persona_description,persona_attitudes,persona_points,persona_needs,persona_activity,user_email
+      }
+  }
+` 
+
 
 const UpdatePersona = () => {
     const navigate = useNavigate();
-    const { personas, setPersonas, selectedPersona, setSelectedPersona } = useContext(AuthContext);
+    const { setUser,personas, setPersonas,addPersona, selectedPersona, setSelectedPersona } = useContext(AuthContext);
 
     const personaKey = selectedPersona?.key;
     const ForEdit = personaKey !== undefined;
@@ -31,6 +41,9 @@ const UpdatePersona = () => {
     const [editImage, setEditImage] = useState(false);
     const [imagePreview,setImagePreview] = useState(image,defaultImage);
     const [deleteButton,setDeleteButton] = useState(false);
+
+
+    const [createPersona, { loading, error }] = useMutation(create_Persona)
 
     useEffect(() => {
         if (ForEdit && personas[personaKey]) {
@@ -78,27 +91,71 @@ const UpdatePersona = () => {
         setEditImage(false);
     };
 
-    const updatePersona = () => {
-        if(currentData.name==""){
-            ToastMessage('Name is required','warning');
+    const updatePersona = async() => {
+        if(currentData.name=="" || currentData.quote=="" || currentData.description=="" || currentData.attitudes==""){
+            ToastMessage('Required fields should not be empty','warning');
             return;
-            
         }
+
+        let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        if (!loggedInUser) {
+            ToastMessage('No user logged in', 'error');
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+
+
+
         if (ForEdit) {
             setPersonas((prevPersonas) => {
                 const updatedPersonas = [...prevPersonas];
                 updatedPersonas[personaKey] = { ...currentData, image };
+    
+                // Update personas in the logged-in user object
+                loggedInUser.personas = updatedPersonas;
+    
+                // Update users array in localStorage
+                users = users.map(user => 
+                    user.email === loggedInUser.email ? { ...user, personas: updatedPersonas } : user
+                );
+    
+                localStorage.setItem("users", JSON.stringify(users));
+                localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+    
+                ToastMessage("Persona Updated Successfully 👍", 'info');
                 return updatedPersonas;
             });
-            ToastMessage("Persona Updated Successfully 👍",'info')
         } else {
             const newPersona = { ...currentData, image };
-            setPersonas((prevPersonas) => [...prevPersonas, newPersona]);
-            ToastMessage("Persona Created Successfully 👍",'success')
+            addPersona(newPersona);
+            
+            try {
+                const { data } = await createPersona({
+                  variables: {
+                    persona_name:currentData.name,
+                    persona_quote:currentData.quote,
+                    persona_description:currentData.description,
+                    persona_attitudes:currentData.attitudes,
+                    persona_points:currentData.points,
+                    persona_needs:currentData.needs,
+                    persona_activity:currentData.activity,
+                    user_email:loggedInUser.email
+                  },
+                });
+        
+                if (data) {
+                    ToastMessage("Persona Created Successfully 👍",'success');
+                    
+                }
+              } catch (err) {
+                console.error("Persona error:", err);
+              }
+            
         }
-        navigate(-1);
+        navigate("/UserPage");
     };
-
+     
     const setDeleteBtnState=(a)=>{
         setDeleteButton(a);
     }
@@ -115,16 +172,31 @@ const UpdatePersona = () => {
         )
     }
 
-    const handleDelete=()=>{
-        setPersonas((prevPersonas) => {
-            const updatedPersonas = prevPersonas.filter((_, index) => index !== personaKey);
-            return updatedPersonas;
-        });
-        setSelectedPersona(null);  // Clear the selected persona
-        setDeleteBtnState(false); 
-        ToastMessage("Persona Deleted",'info');
-        navigate(-1)
-    }
+        const handleDelete = () => {
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
+          
+            if (!currentUser) return;
+          
+            users = users.map(user => {
+              if (user.email === currentUser.email) {
+                user.personas = user.personas.filter((_, index) => index !== personaKey);
+                currentUser.personas = user.personas;
+              }
+              return user;
+            });
+          
+            localStorage.setItem("users", JSON.stringify(users));
+            localStorage.setItem("loggedInUser", JSON.stringify(currentUser));
+          
+            setUser(currentUser);
+            setPersonas(currentUser.personas);
+            setSelectedPersona(null);
+            setDeleteBtnState(false);
+            ToastMessage("Persona Deleted", 'info');
+            navigate(-1);
+          };
+          
 
 
     const handleClose = () => {
@@ -134,6 +206,7 @@ const UpdatePersona = () => {
     const click=()=>{
         document.getElementById('fileInput').click()
     }
+    
 
     return (
         <div className='update'>
@@ -191,19 +264,19 @@ const UpdatePersona = () => {
 
             <div className="text-area">
                 <div className="textArea">
-                    <label htmlFor="">Notable Quote</label>
+                    <label htmlFor="">Notable Quote<span className='highlight'>*</span></label>
                     <textarea type="text" id='quote' name='quote' value={currentData.quote} onChange={handleChange} placeholder='Enter a quote that identifies the persona'/>
                 </div>
                 <div className="textArea">
-                    <label htmlFor="">Description</label>
+                    <label htmlFor="">Description<span className='highlight'>*</span></label>
                     <textarea type="text" id='description' name='description' value={currentData.description} onChange={handleChange} placeholder='Enter a general description/bio about the persona'/>
                     
                 </div>
                 <div className="textArea">
-                    <label htmlFor="">Attitudes/Motivations</label>
+                    <label htmlFor="">Attitudes/Motivations<span className='highlight'>*</span></label>
                     <textarea type="text" id='attitudes' name='attitudes' value={currentData.attitudes} onChange={handleChange} placeholder='What drives and incentives the persona to reach desired goals?what mindset does the persona have?'/>
                 </div>
-                <div className="textArea">
+                <div className="quill">
                     <label htmlFor="">Pain Points</label>
                     <ReactQuill
                         id='points'
@@ -213,17 +286,17 @@ const UpdatePersona = () => {
                         placeholder='What are the biggest challenges that the persona faces in their job?'
                     />
                 </div>
-                <div className="textArea">
+                <div className="quill">
                     <label htmlFor="">Jobs/Needs</label>
                     <ReactQuill
                         id='needs'
                         name='needs'
-                        value={currentData.needs}
+                        value={currentData.needs} 
                         onChange={(value) => handlequillChange('needs', value)}
                         placeholder='What are the personas functional, social, and emotional needs to be successful at their job?'
                     />
                 </div>
-                <div className="textArea">
+                <div className="quill">
                     <label htmlFor="">Activities</label>
                     <ReactQuill
                         id='activity'

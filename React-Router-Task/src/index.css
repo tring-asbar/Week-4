@@ -26,15 +26,17 @@ body{
 .header{
   background-color: black;
   display: flex;
-  width: 1413px;
+  max-width: 100%;
   height: 40px;
   /* justify-content: space-between; */
-  gap:80%;
+  gap:75%;
   padding:  2% 4%;
 }
 .header img{
-  padding: 3%;
+  width: 150px;
+  /* height: 100px; */
 }
+
 .header button{
   margin: 0% 20px;
 }
@@ -103,7 +105,7 @@ body{
 .persona-btn > .content{
   padding: 0%  1% 1% 1%;;
 }
-.addActivity {
+.logout {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -152,9 +154,12 @@ body{
 .card h1{
   text-align: center;
   color: rgb(12, 109, 139);
+  font-weight: 600;
+  margin: 2%;
 }
 .card p{
   text-align: center;
+  font-style: italic;
 }
 .card img{
   border-radius: 10px;
@@ -376,6 +381,7 @@ textarea::placeholder{
   margin: 2% 0% 2% 0%;
   border: 1px solid rgb(128,128,128,0.6);
   border-radius: 5px;
+  outline: none;
 }
 .loginForm label{
   margin: 3% 0% 2% 0%;
@@ -414,6 +420,14 @@ input::placeholder{
 
 .username input{
   font-family: "poppins",serif;
+}
+.ql-toolbar{
+  display: none;
+}
+
+.quill:focus-within .ql-toolbar {
+  display: block;
+  /* visibility: visible; */
 }
 
 
